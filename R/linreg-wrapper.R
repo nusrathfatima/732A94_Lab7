@@ -29,9 +29,6 @@
 #' @export
 
 linreg <- function(formula, data) {
-  suppressMessages( # without suppressing output of testthaat looks horrible
-    devtools::use_package("Matrix")
-  )
   # Error handling -------------------------------------------------------------
   # Check whether inputs can be coerced to formula and data.frame
   canCoerse <- TRUE
