@@ -59,64 +59,6 @@ Ridgereg <- setRefClass(
       storeCache("coef", betaHat)
       return(betaHat)
     },
-    summary = function(digits = 3, ...){
-      stop("Not implemented")
-      # "Prints a summary of a Linreg object."
-      # # This method is loosely based on summary.lm()
-      # #
-      # # Args:
-      # #   digits: the minimum number of significant digits to be printed in
-      # #           values.
-      # #   ...:    further arguments
-      # #
-      # # Returns
-      # #   Prints a summary of an object and invisibly returns it.
-      # n <- nrow(.self$data)
-      # df <- n - (length(.self$coef()))
-      #
-      # # Heading
-      # cat("\nCall:\n", paste(deparse(.self$call), sep = "\n", collapse = "\n"),
-      #     "\n\n", sep = "")
-      #
-      # # Coefficients
-      # coef <- data.frame(Estimate = .self$coef())
-      #
-      # # Standard errors
-      # sigmaHat <- 1 / df * sum(.self$resid()^2)
-      # X <- model.matrix(.self$formula, .self$data)
-      # varCovar <- sigmaHat * solve(t(X) %*% X)
-      # se <- sqrt(diag(varCovar))
-      # coef[["Std. Error"]] <- se
-      #
-      # # t-values
-      # tstat <- coef[["Estimate"]] / se
-      # coef[["t value"]] <- tstat
-      #
-      # # p-value
-      # pval <- 2 * pt(abs(coef[["t value"]]), df, lower.tail = FALSE)
-      # coef[["Pr(>|t|)"]] <- pval
-      #
-      # # asterisks
-      # asterisks <- ifelse(pval < 0.0001, "***",
-      #                     ifelse(pval < 0.001, "**",
-      #                            ifelse(pval < 0.05, "*",
-      #                                   ifelse(pval < 0.1, ".", ""))))
-      # coef[[" "]] <- asterisks
-      #
-      # # Print coefficients table
-      # cat("Coefficients:\n")
-      # print.data.frame(coef, digits = digits)
-      # cat("---\n")
-      # cat("Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1")
-      # cat("\n\n")
-      #
-      # # Degrees of freedom
-      # cat("Residual standard error:",
-      #     format(sqrt(sigmaHat), digits = digits), "on",
-      #     df, "degrees of freedom")
-      #
-      # return(invisible(.self))
-    },
     isCached = function(methodName) {
       "Checks whether the result of a method is stored in cache"
       #

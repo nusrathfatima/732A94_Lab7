@@ -29,10 +29,6 @@ symbolic description of the model to be fitted.}
 
 \item{\code{isCached(methodName)}}{Checks whether the result of a method is stored in cache}
 
-\item{\code{print(digits = 3, ...)}}{Prints a very brief summary of a Linreg object.}
-
 \item{\code{storeCache(methodName, value)}}{Stores result for the method, computes hash of data and stores it}
-
-\item{\code{summary(digits = 3, ...)}}{Prints a summary of a Linreg object.}
 }}
 
