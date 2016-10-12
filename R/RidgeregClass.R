@@ -59,31 +59,6 @@ Ridgereg <- setRefClass(
       storeCache("coef", betaHat)
       return(betaHat)
     },
-    print = function(digits = 3, ...){
-      "Prints a very brief summary of a Linreg object."
-      # This method is extensively based on print.lm()
-      #
-      # Args:
-      #   digits: the minimum number of significant digits to be printed in
-      #           values.
-      #   ...:    further arguments
-      #
-      # Returns
-      #   Prints a very brief summary of an object and invisibly returns it.
-
-      # Heading
-      cat("\nCall:\n", paste(deparse(.self$call), sep = "\n", collapse = "\n"),
-          "\n\n", sep = "")
-
-      # Coefficients
-      cat("Coefficients:\n")
-      #print(format(.self$coef(), digits = digits), print = 2L, quote = FALSE)
-      print.default(format(.self$coef(), digits = digits), print.gap = 2L,
-                    quote = FALSE)
-      cat("\n")
-
-      return(invisible(.self$copy))
-    },
     summary = function(digits = 3, ...){
       stop("Not implemented")
       # "Prints a summary of a Linreg object."
