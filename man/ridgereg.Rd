@@ -14,7 +14,7 @@ be fitted.}
 \item{data}{a data frame or (or object coercible by
 \code{\link{as.data.frame}}).}
 
-\item{lambda}{lambda of a model}
+\item{lambda}{lambda of a model.}
 }
 \value{
 \code{ridgereg} returns an object of class "\code{Ridgereg}".
@@ -23,12 +23,14 @@ be fitted.}
   \item{coef()}{a named vector of coefficients}
   \item{resid()}{the residuals, that is response minus fitted values}
   \item{pred()}{predicted values of of a model}
+  \item{print()}{print the model}
+  \item{plot()}{plot the residuals of the model}
 }
 \description{
 Use \code{ridgereg} to perform ridge regressions.
 }
 \examples{
-linreg(formula = Sepal.Length ~ Sepal.Width, data = iris)
+ridgereg(formula = Sepal.Length ~ Sepal.Width + Petal.Length, data = iris)
 
 \dontrun{
 linreg(TRUE, TRUE)

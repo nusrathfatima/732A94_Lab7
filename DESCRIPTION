@@ -20,10 +20,13 @@ Imports:
     Matrix,
     knitr,
     rmarkdown,
-    methods,
     devtools,
     pryr,
-    MASS,
+    plotly,
+    stats,
+    methods,
+    maps,
+    nycflights13,
     dplyr
 Suggests:
     testthat

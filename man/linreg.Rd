@@ -23,6 +23,9 @@ be fitted.}
   \item{coef()}{a named vector of coefficients}
   \item{resid()}{the residuals, that is response minus fitted values}
   \item{pred()}{predicted values of of a model}
+  \item{print()}{print the model}
+  \item{plot()}{plot the residuals of the model}
+  \item{summary()}{summary of the model esitmation}
 }
 \description{
 Use \code{linreg} to perform linear regressions.

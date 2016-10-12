@@ -30,11 +30,11 @@
   m[[1L]] <- quote(stats::model.frame)
   m <- eval.parent(m)
   Terms <- attr(m, "terms")
-  Y <- model.response(m)
-  X <- model.matrix(Terms, m, contrasts)
+  Y <- stats::model.response(m)
+  X <- stats::model.matrix(Terms, m, contrasts)
   n <- nrow(X)
   p <- ncol(X)
-  offset <- model.offset(m)
+  offset <- stats::model.offset(m)
   if (!is.null(offset))
     Y <- Y - offset
   if (Inter <- attr(Terms, "intercept")) {
