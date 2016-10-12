@@ -158,7 +158,7 @@ Linreg <- setRefClass(
         ylab("Residuals")+
         ggtitle("Residual vs Fitted Plot")+
         theme_bw()
-      
+
       p2<-ggplot(X, aes(pred, sqrt(abs(scale(resid)))))+
         geom_point(na.rm=TRUE)+
         geom_smooth(method="lm", na.rm = TRUE, color="red")+
@@ -166,7 +166,7 @@ Linreg <- setRefClass(
         ylab(expression(sqrt("|Standardized residuals|")))+
         ggtitle("Scale-Location")+
         theme_bw()
-      
+
       return(list(rvfPlot=p1, sclLocPlot=p2))
     },
     summary = function(digits = 3, ...){
@@ -236,10 +236,6 @@ Linreg <- setRefClass(
       # Returns:
       #   TRUE if the result is cached. FALSE if it is not.
 
-      suppressMessages( # without suppressing output of testthaat looks horrible
-        devtools::use_package("digest")
-      )
-
       # Check if it is NULL (never initialized)
       if (is.null(.self$cache[[methodName]]$hash)) {
         return(FALSE)
@@ -264,10 +260,6 @@ Linreg <- setRefClass(
       #
       # Returns:
       #   Nothing, but modifies fields of a Linreg object
-
-      suppressMessages( # without suppressing output of testthaat looks horrible
-        devtools::use_package("digest")
-      )
 
       # Calculate hash of the list with two objects
       # - formula
