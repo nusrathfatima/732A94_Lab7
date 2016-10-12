@@ -1,11 +1,30 @@
 Package: Lab7
-Title: What the Package Does (one line, title case)
+Title: Alternate regression methods and flight delays
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: as.person(c(
+    "Torrin Danner <torda385@student.liu.se> [aut]",
+    "Joshua Hudson <joshu106@student.liu.se> [aut]",
+    "Sascha Schmalz <sassc662@student.liu.se> [aut, cre]",
+    "Nikolajs Prihodko <nikpr874@student.liu.se> [aut]"
+  ))
+Maintainer: Sascha Schmalz <sassc662@student.liu.se>
+Description: This package provides a hand-crafted method of evaluating linear regression models.
 Depends:
-    R (>= 3.3.1)
-License: What license is it under?
+    R (>= 3.2.3)
+License: GPL (>= 3.0)
 Encoding: UTF-8
 LazyData: true
+Imports:
+    ggplot2,
+    digest,
+    Matrix,
+    knitr,
+    rmarkdown,
+    methods,
+    devtools,
+    pryr,
+    MASS
+Suggests:
+    testthat
 RoxygenNote: 5.0.1
+VignetteBuilder: knitr
