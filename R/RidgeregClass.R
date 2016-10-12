@@ -1,0 +1,173 @@
+#' A Reference Class to a ridgereg regression model.
+#'
+#' @field formula an object of \code{\link{class}} \code{\link{formula}}: a
+#'   symbolic description of the model to be fitted.
+#' @field data a data frame
+#' @field lambda lambda of a model
+#' @field cache a list that contains cached values for results of methods
+#'   \code{coef()}, \code{resid()}, \code{pred()} and the hash values of fields
+#'   \code{formula} and \code{data} used to compute the output
+#'
+
+# How caching works
+#
+# 1. Before computing anything, check if the result is already stored in cache.
+# 2a. If the result is stored, then return it.
+# 2b. If the result is not stored, then compute it, save it in cache, return it
+#
+# Structure of the cache list:
+# cache$
+#       coef[["hash", "value"]]
+#       resid[["hash", "value"]]
+#       pred[["hash", "value"]]
+
+
+# Class ------------------------------------------------------------------------
+Ridgereg <- setRefClass(
+  "Ridgereg",
+  contains = "Linreg",
+  # Fields ---------------------------------------------------------------------
+  fields = list(formula = "formula",
+                data = "data.frame",
+                lambda = "numeric",
+                cache = "list",
+                call = "language"),
+  methods = list(
+    # Methods --------------------------------------------------------------------
+    coef = function() {
+      "Computes and returns coefficients of the model"
+      #
+      # Args:
+      #
+      # Returns:
+      #   Named vector of estimated coefficients.
+
+      # Check if the result is already cached
+      if (isCached("coef")) {
+        return(.self$cache$coef$value)
+      }
+
+      # Calls external function .ridgeregQr
+      ridgeregResult <- .ridgeregQr(formula = .self$formula,
+                                    data = .self$data,
+                                    lambda= .self$lambda)
+
+      # Format in the same way as lm()
+      betaHat <- ridgeregResult$coef
+
+      # Store the result in cache
+      storeCache("coef", betaHat)
+      return(betaHat)
+    },
+    summary = function(digits = 3, ...){
+      stop("Not implemented")
+      # "Prints a summary of a Linreg object."
+      # # This method is loosely based on summary.lm()
+      # #
+      # # Args:
+      # #   digits: the minimum number of significant digits to be printed in
+      # #           values.
+      # #   ...:    further arguments
+      # #
+      # # Returns
+      # #   Prints a summary of an object and invisibly returns it.
+      # n <- nrow(.self$data)
+      # df <- n - (length(.self$coef()))
+      #
+      # # Heading
+      # cat("\nCall:\n", paste(deparse(.self$call), sep = "\n", collapse = "\n"),
+      #     "\n\n", sep = "")
+      #
+      # # Coefficients
+      # coef <- data.frame(Estimate = .self$coef())
+      #
+      # # Standard errors
+      # sigmaHat <- 1 / df * sum(.self$resid()^2)
+      # X <- model.matrix(.self$formula, .self$data)
+      # varCovar <- sigmaHat * solve(t(X) %*% X)
+      # se <- sqrt(diag(varCovar))
+      # coef[["Std. Error"]] <- se
+      #
+      # # t-values
+      # tstat <- coef[["Estimate"]] / se
+      # coef[["t value"]] <- tstat
+      #
+      # # p-value
+      # pval <- 2 * pt(abs(coef[["t value"]]), df, lower.tail = FALSE)
+      # coef[["Pr(>|t|)"]] <- pval
+      #
+      # # asterisks
+      # asterisks <- ifelse(pval < 0.0001, "***",
+      #                     ifelse(pval < 0.001, "**",
+      #                            ifelse(pval < 0.05, "*",
+      #                                   ifelse(pval < 0.1, ".", ""))))
+      # coef[[" "]] <- asterisks
+      #
+      # # Print coefficients table
+      # cat("Coefficients:\n")
+      # print.data.frame(coef, digits = digits)
+      # cat("---\n")
+      # cat("Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1")
+      # cat("\n\n")
+      #
+      # # Degrees of freedom
+      # cat("Residual standard error:",
+      #     format(sqrt(sigmaHat), digits = digits), "on",
+      #     df, "degrees of freedom")
+      #
+      # return(invisible(.self))
+    },
+    isCached = function(methodName) {
+      "Checks whether the result of a method is stored in cache"
+      #
+      # Args:
+      #   method: A character string with the name of the method to check for
+      #           whether its result is alread cached
+      #
+      # Returns:
+      #   TRUE if the result is cached. FALSE if it is not.
+
+      # Check if it is NULL (never initialized)
+      if (is.null(.self$cache[[methodName]]$hash)) {
+        return(FALSE)
+      }
+
+      # Check if hash of current data, formula is the same as it was when cache
+      # was computed
+      currentHash <- digest::digest(list(.self$formula,
+                                         .self$data,
+                                         .self$lambda), algo = "md5")
+      if (currentHash == .self$cache[[methodName]]$hash) {
+        return(TRUE)
+      } else {
+        return(FALSE)
+      }
+    },
+    storeCache = function(methodName, value) {
+      "Stores result for the method, computes hash of data and stores it"
+      # used to compute the value
+      #
+      # Args:
+      #   method: character name of the method
+      #   value:  value that the method returns
+      #
+      # Returns:
+      #   Nothing, but modifies fields of a Linreg object
+
+
+      # Calculate hash of the list with two objects
+      # - formula
+      # - data
+      currentHash <- digest::digest(list(.self$formula,
+                                         .self$data,
+                                         .self$lambda), algo = "md5")
+      # Store hash in the cache list under the appropriate method
+      .self$cache[[methodName]] <- list(
+        hash = currentHash,
+        value = value
+      )
+
+      return(invisible(currentHash))
+    }
+  )
+)
