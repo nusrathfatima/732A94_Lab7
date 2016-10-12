@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 Package: Lab7
+=======
+Package: linreg
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
 Title: Alternate regression methods and flight delays
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: as.person(c(
     "Torrin Danner <torda385@student.liu.se> [aut]",
     "Joshua Hudson <joshu106@student.liu.se> [aut]",
@@ -20,10 +24,18 @@ Imports:
     Matrix,
     knitr,
     rmarkdown,
-    methods,
     devtools,
     pryr,
+<<<<<<< HEAD
     MASS
+=======
+    plotly,
+    stats,
+    methods,
+    maps,
+    nycflights13,
+    dplyr
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
 Suggests:
     testthat
 RoxygenNote: 5.0.1

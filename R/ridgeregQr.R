@@ -1,6 +1,6 @@
-#' Perform ridge regression using least squares
+#' Perform ridge regression using QR decomposition
 #'
-#' Use \code{ridgereg} to perform ridge regression.
+#' Use \code{.ridgeregQr} to perform ridge regression.
 #'
 #' @param formula an object of \code{\link{class}} \code{\link{formula}} (or one
 #'   that can be coerced to that class): a symbolic description of the model to
@@ -19,24 +19,22 @@
 #' @seealso \code{\link{lm}}, \code{\link{class}}, \code{\link{formula}}
 #'
 #' @examples
-#' ridgereg(formula = Sepal.Length ~ Sepal.Width, data = iris, lambda=0)
+#' .ridgeregQr(formula = Sepal.Length ~ Sepal.Width, data = iris, lambda = 0)
 #'
 #' \dontrun{
-#' ridgereg(TRUE, TRUE)
+#' .ridgeregQr(TRUE, TRUE)
 #' }
-#' @export
-ridgereg <- function(formula, data, subset, na.action, lambda = 0, model = FALSE, x = FALSE, y = FALSE, contrasts = NULL, ...) {
+.ridgeregQr <- function(formula, data, subset, na.action, lambda = 0, model = FALSE, x = FALSE, y = FALSE, contrasts = NULL, ...) {
   m <- match.call(expand.dots = FALSE)
   m$model <- m$x <- m$y <- m$contrasts <- m$... <- m$lambda <- NULL
   m[[1L]] <- quote(stats::model.frame)
   m <- eval.parent(m)
   Terms <- attr(m, "terms")
-  Y <- model.response(m)
-  X.o<-X
-  X <- model.matrix(Terms, m, contrasts)
+  Y <- stats::model.response(m)
+  X <- stats::model.matrix(Terms, m, contrasts)
   n <- nrow(X)
   p <- ncol(X)
-  offset <- model.offset(m)
+  offset <- stats::model.offset(m)
   if (!is.null(offset))
     Y <- Y - offset
   if (Inter <- attr(Terms, "intercept")) {
@@ -46,7 +44,7 @@ ridgereg <- function(formula, data, subset, na.action, lambda = 0, model = FALSE
     X <- X[, -Inter] - rep(Xm, rep(n, p))
     Y <- Y - Ym
   }
-  else Ym <- Xm <- NA
+  else  Ym <- Xm <- NA
   Xscale <- drop(rep(1/n, n) %*% X^2)^0.5
   X <- X/rep(Xscale, rep(n, p))
   Xs <- svd(X)
@@ -54,11 +52,10 @@ ridgereg <- function(formula, data, subset, na.action, lambda = 0, model = FALSE
   d <- Xs$d
   #this is the actual formula used to determine coefficients
   #save coefficients as lscoef
-  X.o <- cbind(1, X.o)
-  lambda.diag <- lambda * diag(dim(X.o)[2])
-  lscoef<-solve(t(X.o) %*% X.o + lambda.diag) %*% (t(X.o) %*% Y)
+  answer.qr = qr(crossprod(X) + diag(n*lambda,p,p))
+  lscoef = qr.coef(answer.qr,crossprod(X,Y))
   #only modify the two lines above
-  lsfit <- X.o %*% lscoef
+  lsfit <- X %*% lscoef
   resid <- Y - lsfit
   s2 <- sum(resid^2)/(n - p - Inter)
   HKB <- (p - 2) * s2/sum(lscoef^2)
@@ -75,15 +72,6 @@ ridgereg <- function(formula, data, subset, na.action, lambda = 0, model = FALSE
   res <- list(coef = drop(coef), scales = Xscale, Inter = Inter,
               lambda = lambda, ym = Ym, xm = Xm, GCV = GCV, kHKB = HKB,
               kLW = LW)
-  #not sure how to do this
-  #return(invisible(res))
-  #set class here
-  class(res) <- "ridgelm"
-  res
-}
 
-ridgereg(formula = Sepal.Length ~ Sepal.Width, data = iris, lambda=0)
-longley # not the same as the S-PLUS dataset
-names(longley)[1] <- "y"
-ridgereg.qr(y ~ ., longley)
-ridgereg(y ~ ., longley)
+  return(invisible(res))
+}

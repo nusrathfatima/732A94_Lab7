@@ -1,12 +1,24 @@
+<<<<<<< HEAD
 #' A Reference Class to a ridge regression model.
+=======
+#' A Reference Class to a ridgereg regression model.
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
 #'
 #' @field formula an object of \code{\link{class}} \code{\link{formula}}: a
 #'   symbolic description of the model to be fitted.
 #' @field data a data frame
+<<<<<<< HEAD
 #' @field cache a list that contains cached values for results of methods
 #'   \code{coef()}, \code{pred()} and the hash values of fields
 #'   \code{formula} and \code{data} used to compute the output
 #'@export
+=======
+#' @field lambda lambda of a model
+#' @field cache a list that contains cached values for results of methods
+#'   \code{coef()}, \code{resid()}, \code{pred()} and the hash values of fields
+#'   \code{formula} and \code{data} used to compute the output
+#'
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
 
 # How caching works
 #
@@ -17,12 +29,20 @@
 # Structure of the cache list:
 # cache$
 #       coef[["hash", "value"]]
+<<<<<<< HEAD
+=======
+#       resid[["hash", "value"]]
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
 #       pred[["hash", "value"]]
 
 
 # Class ------------------------------------------------------------------------
 Ridgereg <- setRefClass(
   "Ridgereg",
+<<<<<<< HEAD
+=======
+  contains = "Linreg",
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
   # Fields ---------------------------------------------------------------------
   fields = list(formula = "formula",
                 data = "data.frame",
@@ -39,6 +59,7 @@ Ridgereg <- setRefClass(
       # Returns:
       #   Named vector of estimated coefficients.
 
+<<<<<<< HEAD
 
       # Extract X matrix and Y matrix (vector) from data and formula
       X <- model.matrix(.self$formula, .self$data)
@@ -143,6 +164,24 @@ Ridgereg <- setRefClass(
 
 
       return(invisible(.self))
+=======
+      # Check if the result is already cached
+      if (isCached("coef")) {
+        return(.self$cache$coef$value)
+      }
+
+      # Calls external function .ridgeregQr
+      ridgeregResult <- .ridgeregQr(formula = .self$formula,
+                                    data = .self$data,
+                                    lambda= .self$lambda)
+
+      # Format in the same way as lm()
+      betaHat <- ridgeregResult$coef
+
+      # Store the result in cache
+      storeCache("coef", betaHat)
+      return(betaHat)
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
     },
     isCached = function(methodName) {
       "Checks whether the result of a method is stored in cache"
@@ -154,10 +193,13 @@ Ridgereg <- setRefClass(
       # Returns:
       #   TRUE if the result is cached. FALSE if it is not.
 
+<<<<<<< HEAD
       suppressMessages( # without suppressing output of testthaat looks horrible
         devtools::use_package("digest")
       )
 
+=======
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
       # Check if it is NULL (never initialized)
       if (is.null(.self$cache[[methodName]]$hash)) {
         return(FALSE)
@@ -165,7 +207,13 @@ Ridgereg <- setRefClass(
 
       # Check if hash of current data, formula is the same as it was when cache
       # was computed
+<<<<<<< HEAD
       currentHash <- digest::digest(list(.self$formula, .self$data), algo = "md5")
+=======
+      currentHash <- digest::digest(list(.self$formula,
+                                         .self$data,
+                                         .self$lambda), algo = "md5")
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
       if (currentHash == .self$cache[[methodName]]$hash) {
         return(TRUE)
       } else {
@@ -183,14 +231,23 @@ Ridgereg <- setRefClass(
       # Returns:
       #   Nothing, but modifies fields of a Linreg object
 
+<<<<<<< HEAD
       suppressMessages( # without suppressing output of testthaat looks horrible
         devtools::use_package("digest")
       )
+=======
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
 
       # Calculate hash of the list with two objects
       # - formula
       # - data
+<<<<<<< HEAD
       currentHash <- digest::digest(list(.self$formula, .self$data), algo = "md5")
+=======
+      currentHash <- digest::digest(list(.self$formula,
+                                         .self$data,
+                                         .self$lambda), algo = "md5")
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
       # Store hash in the cache list under the appropriate method
       .self$cache[[methodName]] <- list(
         hash = currentHash,

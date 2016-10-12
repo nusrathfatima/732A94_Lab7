@@ -4,9 +4,15 @@
 \name{Ridgereg-class}
 \alias{Ridgereg}
 \alias{Ridgereg-class}
+<<<<<<< HEAD
 \title{A Reference Class to a ridge regression model.}
 \description{
 A Reference Class to a ridge regression model.
+=======
+\title{A Reference Class to a ridgereg regression model.}
+\description{
+A Reference Class to a ridgereg regression model.
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
 }
 \section{Fields}{
 
@@ -16,8 +22,15 @@ symbolic description of the model to be fitted.}
 
 \item{\code{data}}{a data frame}
 
+<<<<<<< HEAD
 \item{\code{cache}}{a list that contains cached values for results of methods
 \code{coef()}, \code{pred()} and the hash values of fields
+=======
+\item{\code{lambda}}{lambda of a model}
+
+\item{\code{cache}}{a list that contains cached values for results of methods
+\code{coef()}, \code{resid()}, \code{pred()} and the hash values of fields
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
 \code{formula} and \code{data} used to compute the output}
 }}
 \section{Methods}{
@@ -27,6 +40,7 @@ symbolic description of the model to be fitted.}
 
 \item{\code{isCached(methodName)}}{Checks whether the result of a method is stored in cache}
 
+<<<<<<< HEAD
 \item{\code{predict()}}{Computes and returns predicted values of the model}
 
 \item{\code{print(digits = 3, ...)}}{Prints a very brief summary of a Linreg object.}
@@ -34,5 +48,8 @@ symbolic description of the model to be fitted.}
 \item{\code{storeCache(methodName, value)}}{Stores result for the method, computes hash of data and stores it}
 
 \item{\code{summary(digits = 3, ...)}}{Prints a summary of a Ridgereg object.}
+=======
+\item{\code{storeCache(methodName, value)}}{Stores result for the method, computes hash of data and stores it}
+>>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
 }}
 

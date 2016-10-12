@@ -1,29 +1,34 @@
-<<<<<<< HEAD
+#' Perform ridge regression
 #'
+#' Use \code{ridgereg} to perform ridge regressions.
 #'
 #' @param formula an object of \code{\link{class}} \code{\link{formula}} (or one
 #'   that can be coerced to that class): a symbolic description of the model to
 #'   be fitted.
 #' @param data a data frame or (or object coercible by
 #'   \code{\link{as.data.frame}}).
+#' @param lambda lambda of a model.
 #'
+#' @return \code{ridgereg} returns an object of class "\code{Ridgereg}".
 #'
+#'   An object of class "\code{Ridgereg}" have the following methods:
 #'   \item{coef()}{a named vector of coefficients}
+#'   \item{resid()}{the residuals, that is response minus fitted values}
 #'   \item{pred()}{predicted values of of a model}
+#'   \item{print()}{print the model}
+#'   \item{plot()}{plot the residuals of the model}
 #'
+#' @seealso \code{\link{lm}}, \code{\link{class}}, \code{\link{formula}}
 #'
 #' @examples
-#' linreg(formula = Sepal.Length ~ Sepal.Width, data = iris)
+#' ridgereg(formula = Sepal.Length ~ Sepal.Width + Petal.Length, data = iris)
 #'
 #' \dontrun{
 #' linreg(TRUE, TRUE)
 #' }
 #' @export
 
-linreg <- function(formula, data) {
-  suppressMessages( # without suppressing output of testthaat looks horrible
-    devtools::use_package("Matrix")
-  )
+ridgereg <- function(formula, data, lambda) {
   # Error handling -------------------------------------------------------------
   # Check whether inputs can be coerced to formula and data.frame
   canCoerse <- TRUE
@@ -55,26 +60,9 @@ linreg <- function(formula, data) {
   }
 
   # Body -----------------------------------------------------------------------
-  linregObject <- Linreg$new(formula = formula,
-                             data = data,
-                             call = match.call())
-  return(invisible(linregObject))
+  ridgeregObject <- Ridgereg$new(formula = formula,
+                                 data = data,
+                                 lambda = lambda,
+                                 call = match.call())
+  return(invisible(ridgeregObject))
 }
-=======
-#' linreg: A for performing linear regressions and ridge expressions.
-#'
-#' The package provides six functions to manipulate linear regression
-#' models within a new class {\code{LinregClass}}: \itemize{
-#' \item{\code{\link{coef}} returns the coefficients as a named vector.}
-#' \item{\code{\link{resid}} returns the vector of residuals e.}
-#' \item{\code{pred} returns the predicted values.}
-#' \item{\code{\link{print}} prints the coefficients and coefficient names.}
-#' \item{\code{\link{plot}} creates two plots, residuals vs. fitted values and
-#' square root of residuals vs. fitted values.}
-#' \item{\code{\link{summary}} returns the coefficients with their standard
-#' error, t-value, p-value, estimated standard deviation and degrees of freedom.} }
-#'
-#' @docType package
-#' @name linreg
-NULL
->>>>>>> ca9124b600e1deff0be5eb5654b44da44c7e7807
