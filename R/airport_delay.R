@@ -36,4 +36,4 @@ symbols(dep$lon, dep$lat,
         bg = '#233d4e', fg = '#ffffff',
         circles = sqrt(dep$avg_dep_delay),
         inches = 0.1, add = TRUE, lwd = 0.5,
-        main = '')
+        main = 'Average departute and arrival delay of US flights')
