@@ -149,9 +149,8 @@ Linreg <- setRefClass(
     },
     plot = function(){
       "Plots Residuals vs. Fits and Scale-Location graphs."
-      require(ggplot2)
       X<-data.frame(pred=.self$pred(),resid=.self$resid())
-      p1<-ggplot(X, aes(pred, resid))+
+      p1<-ggplot2::ggplot(X, aes(pred, resid))+
         geom_point()+
         geom_smooth(method="lm", na.rm=TRUE, color="red")+
         xlab(paste("Fitted Values\n",deparse(.self$call)))+
@@ -159,7 +158,7 @@ Linreg <- setRefClass(
         ggtitle("Residual vs Fitted Plot")+
         theme_bw()
 
-      p2<-ggplot(X, aes(pred, sqrt(abs(scale(resid)))))+
+      p2<-ggplot2::ggplot(X, aes(pred, sqrt(abs(scale(resid)))))+
         geom_point(na.rm=TRUE)+
         geom_smooth(method="lm", na.rm = TRUE, color="red")+
         xlab(paste("Fitted Values\n",deparse(.self$call)))+
