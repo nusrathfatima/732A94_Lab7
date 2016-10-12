@@ -19,7 +19,7 @@
 #' @seealso \code{\link{lm}}, \code{\link{class}}, \code{\link{formula}}
 #'
 #' @examples
-#' linreg(formula = Sepal.Length ~ Sepal.Width, data = iris)
+#' ridgereg(formula = Sepal.Length ~ Sepal.Width + Petal.Length, data = iris)
 #'
 #' \dontrun{
 #' linreg(TRUE, TRUE)
