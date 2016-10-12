@@ -38,8 +38,14 @@
   offset <- model.offset(m)
   if (!is.null(offset))
     Y <- Y - offset
-  Inter<-0
-   Ym <- Xm <- NA
+  if (Inter <- attr(Terms, "intercept")) {
+    Xm <- colMeans(X[, -Inter])
+    Ym <- mean(Y)
+    p <- p - 1
+    X <- X[, -Inter] - rep(Xm, rep(n, p))
+    Y <- Y - Ym
+  }
+  else  Ym <- Xm <- NA
   Xscale <- drop(rep(1/n, n) %*% X^2)^0.5
   X <- X/rep(Xscale, rep(n, p))
   Xs <- svd(X)
