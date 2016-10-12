@@ -3,7 +3,7 @@
 #' @field formula an object of \code{\link{class}} \code{\link{formula}}: a
 #'   symbolic description of the model to be fitted.
 #' @field data a data frame
-#' @field lambda
+#' @field lambda lambda of a model
 #' @field cache a list that contains cached values for results of methods
 #'   \code{coef()}, \code{resid()}, \code{pred()} and the hash values of fields
 #'   \code{formula} and \code{data} used to compute the output
@@ -24,7 +24,8 @@
 
 # Class ------------------------------------------------------------------------
 Ridgereg <- setRefClass(
-  "Linreg",
+  "Ridgereg",
+  contains = "Linreg",
   # Fields ---------------------------------------------------------------------
   fields = list(formula = "formula",
                 data = "data.frame",
@@ -46,77 +47,17 @@ Ridgereg <- setRefClass(
         return(.self$cache$coef$value)
       }
 
-      # Calls external function ridgereg.qr
+      # Calls external function .ridgeregQr
+      ridgeregResult <- .ridgeregQr(formula = .self$formula,
+                                    data = .self$data,
+                                    lambda= .self$lambda)
 
       # Format in the same way as lm()
-      betaHat <- betaHat[, 1]
+      betaHat <- ridgeregResult$coef
 
       # Store the result in cache
       storeCache("coef", betaHat)
       return(betaHat)
-    },
-    resid = function() {
-      "Computes and returns residuals of the model"
-      #
-      # Args:
-      #
-      # Returns:
-      #   Named vector of residuals.
-
-      # Check if the result is already cached
-      if (isCached("resid")) {
-        return(.self$cache$resid$value)
-      }
-
-      # Extract X matrix and Y matrix (vector) from data and formula
-      X <- model.matrix(.self$formula, .self$data)
-      yName <- all.vars(.self$formula)[1]
-      Y <- .self$data[yName]
-
-      # Get predicted values
-      yHat <- .self$pred()
-
-      epsilon <- Y - yHat
-
-      # Format in the same way as lm()
-      epsilonVector <- epsilon[, 1]
-      names(epsilonVector) <- rownames(epsilon)
-      epsilon <- epsilonVector
-
-      # Store result in cache
-      storeCache("resid", epsilon)
-
-      return(epsilon)
-    },
-    pred = function() {
-      "Computes and returns predicted values of the model"
-      #
-      # Args:
-      #
-      # Returns:
-      #   Named vector of predicted values.
-
-      # Check if the result is cached
-      if (isCached("pred")) {
-        return(.self$cache$pred$value)
-      }
-
-      # Extract X matrix and Y matrix (vector) from data and formula
-      X <- model.matrix(.self$formula, .self$data)
-
-      # Get estimated coefficients
-      betaHat <- .self$coef()
-
-      yHat <- betaHat %*% t(X)
-      # # Format in the same way as lm()
-      yHatVector <- as.vector(yHat)
-      names(yHatVector) <- colnames(yHat)
-      yHat <- yHatVector
-
-      # Store result in cache
-      storeCache("pred", yHat)
-
-      return(yHat)
     },
     print = function(digits = 3, ...){
       "Prints a very brief summary of a Linreg object."
@@ -143,84 +84,63 @@ Ridgereg <- setRefClass(
 
       return(invisible(.self$copy))
     },
-    plot = function(){
-      "Plots Residuals vs. Fits and Scale-Location graphs."
-      require(ggplot2)
-      X<-data.frame(pred=.self$pred(),resid=.self$resid())
-      p1<-ggplot(X, aes(pred, resid))+
-        geom_point()+
-        geom_smooth(method="lm", na.rm=TRUE, color="red")+
-        xlab(paste("Fitted Values\n",deparse(.self$call)))+
-        ylab("Residuals")+
-        ggtitle("Residual vs Fitted Plot")+
-        theme_bw()
-
-      p2<-ggplot(X, aes(pred, sqrt(abs(scale(resid)))))+
-        geom_point(na.rm=TRUE)+
-        geom_smooth(method="lm", na.rm = TRUE, color="red")+
-        xlab(paste("Fitted Values\n",deparse(.self$call)))+
-        ylab(expression(sqrt("|Standardized residuals|")))+
-        ggtitle("Scale-Location")+
-        theme_bw()
-
-      return(list(rvfPlot=p1, sclLocPlot=p2))
-    },
     summary = function(digits = 3, ...){
-      "Prints a summary of a Linreg object."
-      # This method is loosely based on summary.lm()
+      stop("Not implemented")
+      # "Prints a summary of a Linreg object."
+      # # This method is loosely based on summary.lm()
+      # #
+      # # Args:
+      # #   digits: the minimum number of significant digits to be printed in
+      # #           values.
+      # #   ...:    further arguments
+      # #
+      # # Returns
+      # #   Prints a summary of an object and invisibly returns it.
+      # n <- nrow(.self$data)
+      # df <- n - (length(.self$coef()))
       #
-      # Args:
-      #   digits: the minimum number of significant digits to be printed in
-      #           values.
-      #   ...:    further arguments
+      # # Heading
+      # cat("\nCall:\n", paste(deparse(.self$call), sep = "\n", collapse = "\n"),
+      #     "\n\n", sep = "")
       #
-      # Returns
-      #   Prints a summary of an object and invisibly returns it.
-      n <- nrow(.self$data)
-      df <- n - (length(.self$coef()))
-
-      # Heading
-      cat("\nCall:\n", paste(deparse(.self$call), sep = "\n", collapse = "\n"),
-          "\n\n", sep = "")
-
-      # Coefficients
-      coef <- data.frame(Estimate = .self$coef())
-
-      # Standard errors
-      sigmaHat <- 1 / df * sum(.self$resid()^2)
-      X <- model.matrix(.self$formula, .self$data)
-      varCovar <- sigmaHat * solve(t(X) %*% X)
-      se <- sqrt(diag(varCovar))
-      coef[["Std. Error"]] <- se
-
-      # t-values
-      tstat <- coef[["Estimate"]] / se
-      coef[["t value"]] <- tstat
-
-      # p-value
-      pval <- 2 * pt(abs(coef[["t value"]]), df, lower.tail = FALSE)
-      coef[["Pr(>|t|)"]] <- pval
-
-      # asterisks
-      asterisks <- ifelse(pval < 0.0001, "***",
-                          ifelse(pval < 0.001, "**",
-                                 ifelse(pval < 0.05, "*",
-                                        ifelse(pval < 0.1, ".", ""))))
-      coef[[" "]] <- asterisks
-
-      # Print coefficients table
-      cat("Coefficients:\n")
-      print.data.frame(coef, digits = digits)
-      cat("---\n")
-      cat("Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1")
-      cat("\n\n")
-
-      # Degrees of freedom
-      cat("Residual standard error:",
-          format(sqrt(sigmaHat), digits = digits), "on",
-          df, "degrees of freedom")
-
-      return(invisible(.self))
+      # # Coefficients
+      # coef <- data.frame(Estimate = .self$coef())
+      #
+      # # Standard errors
+      # sigmaHat <- 1 / df * sum(.self$resid()^2)
+      # X <- model.matrix(.self$formula, .self$data)
+      # varCovar <- sigmaHat * solve(t(X) %*% X)
+      # se <- sqrt(diag(varCovar))
+      # coef[["Std. Error"]] <- se
+      #
+      # # t-values
+      # tstat <- coef[["Estimate"]] / se
+      # coef[["t value"]] <- tstat
+      #
+      # # p-value
+      # pval <- 2 * pt(abs(coef[["t value"]]), df, lower.tail = FALSE)
+      # coef[["Pr(>|t|)"]] <- pval
+      #
+      # # asterisks
+      # asterisks <- ifelse(pval < 0.0001, "***",
+      #                     ifelse(pval < 0.001, "**",
+      #                            ifelse(pval < 0.05, "*",
+      #                                   ifelse(pval < 0.1, ".", ""))))
+      # coef[[" "]] <- asterisks
+      #
+      # # Print coefficients table
+      # cat("Coefficients:\n")
+      # print.data.frame(coef, digits = digits)
+      # cat("---\n")
+      # cat("Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1")
+      # cat("\n\n")
+      #
+      # # Degrees of freedom
+      # cat("Residual standard error:",
+      #     format(sqrt(sigmaHat), digits = digits), "on",
+      #     df, "degrees of freedom")
+      #
+      # return(invisible(.self))
     },
     isCached = function(methodName) {
       "Checks whether the result of a method is stored in cache"
