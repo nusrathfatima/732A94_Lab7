@@ -24,7 +24,7 @@
 #' \dontrun{
 #' ridgereg.qr(TRUE, TRUE)
 #' }
-.ridgeregQr <- function(formula, data, subset, na.action, lambda = 0, model = FALSE, x = FALSE, y = FALSE, contrasts = NULL, ...) {
+.ridgeregQr <- function(formula, data, subset, lambda = 0, model = FALSE, x = FALSE, y = FALSE, contrasts = NULL, ...) {
   m <- match.call(expand.dots = FALSE)
   m$model <- m$x <- m$y <- m$contrasts <- m$... <- m$lambda <- NULL
   m[[1L]] <- quote(stats::model.frame)
