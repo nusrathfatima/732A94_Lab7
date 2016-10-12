@@ -14,7 +14,7 @@
 #'
 #' @return A ggplot2 object
 
-airport_delay <- function() {
+visualize_airport_delays <- function() {
   # Prepare airport data for join
   airport <- nycflights13::airports %>%
     mutate(ID = faa) %>%
