@@ -1,6 +1,6 @@
 #' Perform ridge regression using QR decomposition
 #'
-#' Use \code{ridgereg.qr} to perform ridge regression.
+#' Use \code{.ridgeregQr} to perform ridge regression.
 #'
 #' @param formula an object of \code{\link{class}} \code{\link{formula}} (or one
 #'   that can be coerced to that class): a symbolic description of the model to
@@ -19,13 +19,13 @@
 #' @seealso \code{\link{lm}}, \code{\link{class}}, \code{\link{formula}}
 #'
 #' @examples
-#' ridgereg.qr(formula = Sepal.Length ~ Sepal.Width, data = iris, lambda=0)
+#' .ridgeregQr(formula = Sepal.Length ~ Sepal.Width, data = iris, lambda=0)
 #'
 #' \dontrun{
-#' ridgereg.qr(TRUE, TRUE)
+#' .ridgeregQr(TRUE, TRUE)
 #' }
 #' @export
-ridgereg.qr <- function(formula, data, subset, na.action, lambda = 0, model = FALSE, x = FALSE, y = FALSE, contrasts = NULL, ...) {
+.ridgeregQr <- function(formula, data, subset, na.action, lambda = 0, model = FALSE, x = FALSE, y = FALSE, contrasts = NULL, ...) {
   m <- match.call(expand.dots = FALSE)
   m$model <- m$x <- m$y <- m$contrasts <- m$... <- m$lambda <- NULL
   m[[1L]] <- quote(stats::model.frame)
@@ -38,14 +38,8 @@ ridgereg.qr <- function(formula, data, subset, na.action, lambda = 0, model = FA
   offset <- model.offset(m)
   if (!is.null(offset))
     Y <- Y - offset
-  if (Inter <- attr(Terms, "intercept")) {
-    Xm <- colMeans(X[, -Inter])
-    Ym <- mean(Y)
-    p <- p - 1
-    X <- X[, -Inter] - rep(Xm, rep(n, p))
-    Y <- Y - Ym
-  }
-  else Ym <- Xm <- NA
+  Inter<-0
+   Ym <- Xm <- NA
   Xscale <- drop(rep(1/n, n) %*% X^2)^0.5
   X <- X/rep(Xscale, rep(n, p))
   Xs <- svd(X)
