@@ -67,9 +67,6 @@
   res <- list(coef = drop(coef), scales = Xscale, Inter = Inter,
               lambda = lambda, ym = Ym, xm = Xm, GCV = GCV, kHKB = HKB,
               kLW = LW)
-  #not sure how to do this
-  #return(invisible(res))
-  #set class here
-  class(res) <- "ridgelm"
-  res
+
+  return(invisible(res))
 }
