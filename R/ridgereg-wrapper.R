@@ -7,7 +7,7 @@
 #'   be fitted.
 #' @param data a data frame or (or object coercible by
 #'   \code{\link{as.data.frame}}).
-#' @param lambda lambda of a model
+#' @param lambda lambda of a model.
 #'
 #' @return \code{ridgereg} returns an object of class "\code{Ridgereg}".
 #'
@@ -15,6 +15,8 @@
 #'   \item{coef()}{a named vector of coefficients}
 #'   \item{resid()}{the residuals, that is response minus fitted values}
 #'   \item{pred()}{predicted values of of a model}
+#'   \item{print()}{print the model}
+#'   \item{plot()}{plot the residuals of the model}
 #'
 #' @seealso \code{\link{lm}}, \code{\link{class}}, \code{\link{formula}}
 #'
