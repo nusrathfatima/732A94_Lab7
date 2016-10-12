@@ -24,7 +24,6 @@
 #' \dontrun{
 #' ridgereg.qr(TRUE, TRUE)
 #' }
-#' @export
 .ridgeregQr <- function(formula, data, subset, na.action, lambda = 0, model = FALSE, x = FALSE, y = FALSE, contrasts = NULL, ...) {
   m <- match.call(expand.dots = FALSE)
   m$model <- m$x <- m$y <- m$contrasts <- m$... <- m$lambda <- NULL
