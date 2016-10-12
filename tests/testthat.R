@@ -1,4 +1,4 @@
 library(testthat)
-library(LiuLinReg)
+library(linreg)
 
-test_check("LiuLinReg")
+test_check("linreg")

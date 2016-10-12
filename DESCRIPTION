@@ -1,7 +1,6 @@
-Package: Lab7
-Package: 732A94_Lab7
+Package: linreg
 Title: Alternate regression methods and flight delays
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: as.person(c(
     "Torrin Danner <torda385@student.liu.se> [aut]",
     "Joshua Hudson <joshu106@student.liu.se> [aut]",
@@ -23,12 +22,9 @@ Imports:
     rmarkdown,
     methods,
     devtools,
-<<<<<<< HEAD
     pryr,
-    MASS
-=======
-    pryr
->>>>>>> f5627aad130bfe7d61667db9465f5943098b8d14
+    MASS,
+    dplyr
 Suggests:
     testthat
 RoxygenNote: 5.0.1
