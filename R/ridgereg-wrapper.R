@@ -20,8 +20,9 @@
 #'
 #' @seealso \code{\link{lm}}, \code{\link{class}}, \code{\link{formula}}
 #'
+#' @import methods
 #' @examples
-#' ridgereg(formula = Sepal.Length ~ Sepal.Width + Petal.Length, data = iris)
+#' ridgereg(formula = Sepal.Length ~ Sepal.Width + Petal.Length, data = iris,lambda=0)
 #'
 #' \dontrun{
 #' linreg(TRUE, TRUE)
@@ -33,7 +34,7 @@ ridgereg <- function(formula, data, lambda) {
   # Check whether inputs can be coerced to formula and data.frame
   canCoerse <- TRUE
   tryCatch({
-    formula <- as.formula(formula)
+    formula <- stats::as.formula(formula)
     data <- as.data.frame(data)
   }, error = function(e) {
     canCoerse <<- FALSE
@@ -53,7 +54,7 @@ ridgereg <- function(formula, data, lambda) {
   }
 
   # check for multicollinearity of regressors
-  regressors <- model.matrix(formula, data)
+  regressors <- stats::model.matrix(formula, data)
   regressorsRank <- Matrix::rankMatrix(regressors)
   if (regressorsRank < ncol(regressors)) {
     stop("multicollinearity of regressors")

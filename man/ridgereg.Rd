@@ -30,7 +30,7 @@ be fitted.}
 Use \code{ridgereg} to perform ridge regressions.
 }
 \examples{
-ridgereg(formula = Sepal.Length ~ Sepal.Width + Petal.Length, data = iris)
+ridgereg(formula = Sepal.Length ~ Sepal.Width + Petal.Length, data = iris,lambda=0)
 
 \dontrun{
 linreg(TRUE, TRUE)

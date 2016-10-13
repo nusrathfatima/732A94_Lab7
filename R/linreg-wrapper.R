@@ -18,6 +18,8 @@
 #'   \item{plot()}{plot the residuals of the model}
 #'   \item{summary()}{summary of the model esitmation}
 #'
+#' @import methods
+#'
 #' @seealso \code{\link{lm}}, \code{\link{class}}, \code{\link{formula}}
 #'
 #' @examples
@@ -33,7 +35,7 @@ linreg <- function(formula, data) {
   # Check whether inputs can be coerced to formula and data.frame
   canCoerse <- TRUE
   tryCatch({
-    formula <- as.formula(formula)
+    formula <- stats::as.formula(formula)
     data <- as.data.frame(data)
   }, error = function(e) {
     canCoerse <<- FALSE
@@ -53,7 +55,7 @@ linreg <- function(formula, data) {
   }
 
   # check for multicollinearity of regressors
-  regressors <- model.matrix(formula, data)
+  regressors <- stats::model.matrix(formula, data)
   regressorsRank <- Matrix::rankMatrix(regressors)
   if (regressorsRank < ncol(regressors)) {
     stop("multicollinearity of regressors")

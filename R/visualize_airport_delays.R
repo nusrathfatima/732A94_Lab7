@@ -16,6 +16,11 @@
 #' @return A ggplot2 object
 
 visualize_airport_delays <- function() {
+  #this line is solely to pass R CMD check.  They make no difference
+  #and are kind of irritating, but that's the way it is.
+  #for more details, see below:
+  #http://stackoverflow.com/questions/8096313/no-visible-binding-for-global-variable-note-in-r-cmd-check/8096882#8096882
+  faa<-alt<-tz<-dst<-origin<-dep_delay<-ggtitle<-xlab<-ylab<-avg_dep_delay<-dest<-arr_delay<-avg_arr_delay<-theme_minimal<-theme<-element_rect<-element_line<-geom_polygon<-aes<-long<-lat<-group<-geom_point<-type<-coord_cartesian<-NULL
   # Prepare airport data for join
   airport <- nycflights13::airports %>%
     dplyr::mutate(ID = faa) %>%
@@ -80,8 +85,8 @@ visualize_airport_delays <- function() {
                shape = 24) +
     coord_cartesian(xlim = min_max_lon, ylim = min_max_lat) +
     ggtitle('Average delay of flights at airports\nwithin the United States of America') +
-    xlab('Longitude [°]') +
-    ylab('Latitude [°]') +
+    xlab('Longitude') +
+    ylab('Latitude') +
     theme_map
 }
 

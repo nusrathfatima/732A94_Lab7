@@ -9,7 +9,7 @@
 #'   \code{\link{as.data.frame}}).
 #' @param lambda the lambda of the data set. Default is 0.
 #'
-#' @return \code{linreg} returns an object of class "\code{Linreg}".
+#' @return \code{.ridgeregQR} returns an object of class "\code{Ridgereg}".
 #'
 #'   An object of class "\code{Linreg}" have the following methods:
 #'   \item{coef()}{a named vector of coefficients}

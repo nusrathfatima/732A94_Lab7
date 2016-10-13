@@ -215,7 +215,7 @@ Linreg <- setRefClass(
       cat("Coefficients:\n")
       print.data.frame(coef, digits = digits)
       cat("---\n")
-      cat("Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1")
+      cat("Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1")
       cat("\n\n")
 
       # Degrees of freedom
