@@ -53,11 +53,45 @@ Ridgereg <- setRefClass(
                                     lambda= .self$lambda)
 
       # Format in the same way as lm()
-      betaHat <- ridgeregResult$coef
-
+      X <- model.matrix(.self$formula, .self$data)
+      X<- X[,-(1)]
+      betaHat.unscaled <- ridgeregResult$coef
+      betaHat.scaled <- betaHat.unscaled/ridgeregResult$scales
+      interceptHat<-ridgeregResult$ym -  mean(X %*% betaHat.scaled)
+      betaHat<-append(betaHat.scaled,interceptHat,after=0)
       # Store the result in cache
       storeCache("coef", betaHat)
       return(betaHat)
+    },
+    predict = function() {
+      "Computes and returns predicted values of the model"
+      #
+      # Args:
+      #
+      # Returns:
+      #   Named vector of predicted values.
+
+      # Check if the result is cached
+      if (isCached("predict")) {
+        return(.self$cache$predict$value)
+      }
+
+      # Extract X matrix and Y matrix (vector) from data and formula
+      X <- model.matrix(.self$formula, .self$data)
+
+      # Get estimated coefficients
+      betaHat <- .self$coef()
+
+      yHat <- betaHat %*% t(X)
+      # # Format in the same way as lm()
+      yHatVector <- as.vector(yHat)
+      names(yHatVector) <- colnames(yHat)
+      yHat <- yHatVector
+
+      # Store result in cache
+      storeCache("predict", yHat)
+
+      return(yHat)
     },
     isCached = function(methodName) {
       "Checks whether the result of a method is stored in cache"
