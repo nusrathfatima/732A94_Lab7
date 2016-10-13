@@ -10,7 +10,7 @@
   fitControl <- trainControl(method = "cv",
                              number = 10)
   # Set seq of lambda to test
-  lambdaGrid <- expand.grid(lambda = 10^seq(10, -2, length=100))
+  lambdaGrid <- expand.grid(lambda = c(0,.01,.02,.03,.04))
   ridge <- train(crim~.,
                  data = datTrain,
                  method='ridge',
