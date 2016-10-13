@@ -14,6 +14,7 @@
 #' @import plotly
 #'
 #' @return A ggplot2 object
+#' @export
 
 visualize_airport_delays <- function() {
   #this line is solely to pass R CMD check.  They make no difference
@@ -34,7 +35,7 @@ visualize_airport_delays <- function() {
     dplyr::mutate(ID = origin) %>%
     dplyr::select(-origin) %>%
     dplyr::right_join(airport, by = 'ID') %>%
-    dplyr:: filter(!is.na(avg_dep_delay)) %>%
+    dplyr::filter(!is.na(avg_dep_delay)) %>%
     dplyr::mutate(type = ifelse(avg_dep_delay >= 0, 'behind', 'ahead')) %>%
     dplyr::mutate(avg_dep_delay = ifelse(avg_dep_delay < 0, avg_dep_delay * (-1), avg_dep_delay))
 
@@ -51,7 +52,7 @@ visualize_airport_delays <- function() {
     dplyr::mutate(avg_arr_delay = ifelse(avg_arr_delay < 0, avg_arr_delay * (-1), avg_arr_delay))
 
   # Calculate the min and max longitude / latidute to determine the
-  # size of the maß
+  # size of the map
   min_max_lon <- c(min(dep$lon, arr$lon), max(dep$lon, arr$lon)) * 1.02
   min_max_lat <- c(min(dep$lat, arr$lat), max(dep$lat, arr$lat)) * 1.02
 
