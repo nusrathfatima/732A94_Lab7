@@ -51,7 +51,7 @@ visualize_airport_delays <- function() {
     dplyr::mutate(avg_arr_delay = ifelse(avg_arr_delay < 0, avg_arr_delay * (-1), avg_arr_delay))
 
   # Calculate the min and max longitude / latidute to determine the
-  # size of the maß
+  # size of the map
   min_max_lon <- c(min(dep$lon, arr$lon), max(dep$lon, arr$lon)) * 1.02
   min_max_lat <- c(min(dep$lat, arr$lat), max(dep$lat, arr$lat)) * 1.02
 
