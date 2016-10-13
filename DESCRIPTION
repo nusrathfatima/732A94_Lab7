@@ -27,6 +27,7 @@ Imports:
     methods,
     maps,
     nycflights13,
+    caret,
     dplyr
 Suggests:
     testthat
