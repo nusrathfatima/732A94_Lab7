@@ -29,6 +29,8 @@ symbolic description of the model to be fitted.}
 
 \item{\code{isCached(methodName)}}{Checks whether the result of a method is stored in cache}
 
+\item{\code{predict()}}{Computes and returns predicted values of the model}
+
 \item{\code{storeCache(methodName, value)}}{Stores result for the method, computes hash of data and stores it}
 }}
 
