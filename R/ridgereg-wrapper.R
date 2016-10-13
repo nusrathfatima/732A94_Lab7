@@ -60,6 +60,12 @@ ridgereg <- function(formula, data, lambda) {
     stop("multicollinearity of regressors")
   }
 
+  # Check if at least 2 regressors (+1 because of intercept)
+  if (ncol(regressors) < 2 + 1) {
+    stop("need at least 2 regressors")
+  }
+
+
   # Body -----------------------------------------------------------------------
   ridgeregObject <- Ridgereg$new(formula = formula,
                                  data = data,
