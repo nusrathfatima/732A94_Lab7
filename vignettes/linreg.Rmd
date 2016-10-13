@@ -1,0 +1,118 @@
+---
+title: "Linear and Ridge Regressions"
+author: "Torrin Danner, Nickolajs Prihodko, Joshua Hudson, Sascha Schmalz"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The __linreg__ package is an alternative package to the lm package to make a linear regression. This document is not an introduction to linear regression. Furthermore it shall guide you to use the functions of the __linreg__ to perform a linear regression. The calculations are based on the `iris` dataset.
+
+## Creating a Linreg object
+
+Use the `linreg(formula, data)` function to create a `Linreg` object.
+
+```{r, echo = FALSE, message = FALSE}
+devtools::use_package("pryr")
+```
+
+```{r, results = 'hide'}
+library(linreg)
+data(iris)
+
+tmp <- linreg(formula = Sepal.Length ~ Sepal.Width, data = iris)
+pryr::otype(tmp)
+```
+
+The `Linreg` object will be of class `RC`. Using `otype()` out of the `pryr` package will return:
+```{r}
+pryr::otype(tmp)
+```
+
+The `Linreg` object is the starting point for the linear regression. It will allow you to perform several operations on the object.
+
+## Operations on a Linreg object
+
+The following functions are implemented:
+
+| Function  | Description                                                               |
+|-----------|---------------------------------------------------------------------------|
+| print()   | prints the coefficients and the coeffienct names                          |
+| resid()   | returns a vector of residuals $e$                                         |
+| pred()    | returns predicted values $\hat{y}$                                        |
+| coef()    | returns coefficients as a named vector                                    |
+| summary() | returns the standard error, t-value, p-value, the estimate of $\hat{\sigma}$ and the degrees of freedom |
+| plot()    | plots 'Residuals vs. Fitted' and 'Scale-Location' using `ggplot2`         |
+
+In the following you will find a detailed description to each of the functions.
+
+## How to call functions
+
+In general a function is called by `tmp$functionname` where `tmp` is a `Linreg` object. In the following you will find an overview of all functions and the corresponding outpouts. 
+
+The `print()` function will show you the specifications of the Linreg object, its coefficients and the name of its coefficients.
+
+```{r}
+tmp$print()
+```
+
+The `resid()` function will return a vector of the residuals of the linear regression model:
+```{r}
+residuals <- tmp$resid()
+head(residuals, 10)
+```
+
+The `pred()` function will return a vector of the predicted values of the linear regression model:
+```{r}
+predicted <- tmp$pred()
+head(predicted, 10)
+```
+
+The `coef()` function will return the coefficients of the linear regression model:
+```{r}
+tmp$coef()
+```
+
+The `summary()` function will return the standard error, t-value, p-value, the estimate of $\hat{\sigma}$ and the degrees of freedom of the linear regression model:
+```{r}
+tmp$summary()
+```
+
+The `plot()` function will plot the residuals vs. the fitted values as well as the scale location using `ggplot2`. (The `plot()` function requires the package `ggplot2`.)
+
+```{r, echo = FALSE, message = FALSE}
+devtools::use_package("ggplot2")
+```
+
+```{r, results = 'hide', message = FALSE, fig.width = 5}
+tmp$plot()
+```
+
+## Creating a Ridgereg object
+The only difference from `linreg` is that there is one more mandatory parameter `lambda`.
+```{r, results = 'hide', tidy = TRUE}
+tmp <- ridgereg(formula = Sepal.Length ~ Sepal.Width + Petal.Length, data = iris, lambda = 0)
+```
+
+The functionality of the returned `Ridgereg` object is also very similar to `linreg`:
+
+| Function  | Description                                                               |
+|-----------|---------------------------------------------------------------------------|
+| print()   | prints the coefficients and the coeffienct names                          |
+| resid()   | returns a vector of residuals $e$                                         |
+| pred()    | returns predicted values $\hat{y}$                                        |
+| coef()    | returns coefficients as a named vector                                    |
+| plot()    | plots 'Residuals vs. Fitted' and 'Scale-Location' using `ggplot2`         |
+
+For example
+```{r}
+tmp$coef()
+````
+
+```{r, results = 'hide', message = FALSE, fig.width = 5}
+tmp$plot()
+```
+
