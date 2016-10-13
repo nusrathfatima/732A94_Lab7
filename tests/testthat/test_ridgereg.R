@@ -1,17 +1,25 @@
 # Test input parameters --------------------------------------------------------
 context("Test ridgereg inputs")
 # Data frame with multicollinearity issues
-dfMulticol <- data.frame(y = rnorm(3), x = rep(1,3), z = rep(2,3))
+dfMulticol <- data.frame(y = rnorm(3),
+                         x1 = rnorm(3),
+                         x2 = rep(1,3),
+                         z = rep(2,3))
 test_that("wrong parameters", {
   expect_error(ridgereg(function(x) {}, "data"),    "wrong parameters")
   expect_error(ridgereg("formula", function(x) {}), "wrong parameters")
-  expect_error(ridgereg(X ~ Sepal.Width, data = iris), "variable(s) not in data",
-               fixed = TRUE)
-  expect_error(ridgereg(Sepal.Width ~ ., data = iris), "variable(s) not in data",
-               fixed = TRUE)
-  expect_error(ridgereg(x ~ y, data.frame(x = numeric(0), y = numeric(0))),
+  expect_error(ridgereg(X ~ Sepal.Width + Sepal.Height, data = iris, 0),
+               "variable(s) not in data", fixed = TRUE)
+  expect_error(ridgereg(Sepal.Width ~ ., data = iris, 0),
+               "variable(s) not in data", fixed = TRUE)
+  expect_error(ridgereg(y ~ x1 + x2, data.frame(x1 = numeric(0),
+                                                x2 = numeric(0),
+                                                y = numeric(0)), 0),
                "data must have >=1 cols/rows")
-  expect_error(ridgereg(y ~ x + z, dfMulticol), "multicollinearity of regressors")
+  expect_error(ridgereg(y ~ x1 + x2 + z, dfMulticol, 0),
+               "multicollinearity of regressors")
+  expect_error(ridgereg(y ~ x1, dfMulticol[, c("y", "x1")], 0),
+               "need at least 2 regressors")
 })
 
 
