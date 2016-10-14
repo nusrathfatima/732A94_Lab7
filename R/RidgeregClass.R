@@ -34,7 +34,7 @@ Ridgereg <- setRefClass(
                 call = "language"),
   methods = list(
     # Methods --------------------------------------------------------------------
-    coef = function() {
+    coef = function(qr = TRUE) {
       "Computes and returns coefficients of the model"
       #
       # Args:
@@ -47,18 +47,24 @@ Ridgereg <- setRefClass(
         return(.self$cache$coef$value)
       }
 
-      # Calls external function .ridgeregQr
-      ridgeregResult <- .ridgeregQr(formula = .self$formula,
-                                    data = .self$data,
-                                    lambda= .self$lambda)
+      if (qr) {
+        # Calls external function .ridgeregQr
+        ridgeregResult <- .ridgeregQr(formula = .self$formula,
+                                      data = .self$data,
+                                      lambda= .self$lambda)
 
-      # Format in the same way as lm()
-      X <- model.matrix(.self$formula, .self$data)
-      X<- X[,-(1)]
-      betaHat.unscaled <- ridgeregResult$coef
-      betaHat.scaled <- betaHat.unscaled/ridgeregResult$scales
-      interceptHat<-ridgeregResult$ym -  mean(X %*% betaHat.scaled)
-      betaHat<-append(betaHat.scaled,interceptHat,after=0)
+        # Format in the same way as lm()
+        X <- model.matrix(.self$formula, .self$data)
+        X<- X[,-(1)]
+        betaHat.unscaled <- ridgeregResult$coef
+        betaHat.scaled <- betaHat.unscaled/ridgeregResult$scales
+        interceptHat<-ridgeregResult$ym -  mean(X %*% betaHat.scaled)
+        betaHat<-append(betaHat.scaled,interceptHat,after=0)
+
+      } else {
+        betaHat <- .ridgereg(.self$formula, .self$data, .self$lambda)
+      }
+
       # Store the result in cache
       storeCache("coef", betaHat)
       return(betaHat)
