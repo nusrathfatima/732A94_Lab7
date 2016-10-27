@@ -1,6 +1,6 @@
 ---
-title: "Vignette Title"
-author: "Vignette Author"
+title: "Ridge Regressions"
+author: "Torrin Danner, Nickolajs Prihodko, Joshua Hudson, Sascha Schmalz"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -9,50 +9,91 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
-
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
-
-## Vignette Info
-
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r, echo = FALSE}
+library(mlbench)
+library(caret)
+library(leaps)
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+This Vignette shows the answers to section 1.2 from Lab 7.
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+## Divide the BostonHousing data (or your own API data) into a test and training dataset using the caret package.
 
-## More Examples
+```{r}
+data("BostonHousing")
+trainIndex <- caret::createDataPartition(BostonHousing$age, p = .75,
+                                         list = FALSE,
+                                         times= 1)
+datTrain <- BostonHousing[trainIndex, ]
+datTest <- BostonHousing[-trainIndex, ]
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+head(datTrain)
+head(datTest)
 ```
 
-Also a quote using `>`:
+## Fit linear regression models
+### Fit linear regression model
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+```{r}
+ridge <- caret::train(crim~.,
+                 data = datTrain,
+                 method='lm',
+                 trControl = trainControl(method = "cv")
+)
+
+print(ridge)
+
+```
+
+### Fit linear regression model with forward selection covariates
+
+```{r}
+ridge <- caret::train(crim~.,
+                 data = datTrain,
+                 method='leapForward'
+)
+
+print(ridge)
+
+```
+
+The fitted model shows an R2 of ... and ...
+
+## Fit ridgereg model 
+```{r, echo = FALSE}
+caridge<-function(X){
+  data("BostonHousing")
+  dat <- X
+  trainIndex <- caret::createDataPartition(dat$age, p = .75,
+                                           list = FALSE,
+                                           times= 1)
+  datTrain <- dat[trainIndex, ]
+  datTest <- dat[-trainIndex, ]
+  res <- c(datTrain, datTest)
+  fitControl <- caret::trainControl(method = "cv",
+                             number = 10)
+  # Set seq of lambda to test
+  lambdaGrid <- expand.grid(lambda = c(0,.01,.02,.03,.04))
+  ridge <- caret::train(crim~.,
+                 data = datTrain,
+                 method='ridge',
+                 trControl = fitControl,
+                                tuneGrid = lambdaGrid,
+                 preProcess=c('center', 'scale')
+  )
+  predict(ridge$finalModel, type='coef', mode='norm')$coefficients[13,]
+  ridge.pred <- predict(ridge, datTest)
+  avgErrror<-2*sqrt(mean(ridge.pred - datTest$crim)^2)
+  return(ridge)
+}
+```
+
+```{r}
+caridge(BostonHousing)
+```
+The best value of lambda for a 10-fold cross validation can be found in the output.
+
+## Evaluation of the models
+
+The R^2 are quite similar and depend heavily on the random selection of dividing the data into test and training. 
